@@ -1,5 +1,7 @@
 import depositService from '../services/depositService.js';
 import withdrawService from '../services/withdrawService.js';
+import balanceService from '../services/balanceService.js';
+
 import { accountModel } from '../models/accountModel.js';
 
 const deposit = async (req, res) => {
@@ -36,30 +38,15 @@ const withdraw = async (req, res) => {
 
 const balance = async (req, res) => {
   try {
-    const { agency, account } = req.query;
+    const result = await balanceService.get(req.query);
 
-    if (!!!agency || !!!account) {
+    if (!!!result.success) {
       return res.status(400).send({
-        message: 'You must send the agency and account parameters.',
+        message: result.message,
       });
     }
 
-    const accountDB = await accountModel.find({
-      agencia: agency,
-      conta: account,
-    });
-
-    if (accountDB.length === 0) {
-      return res.status(404).send({
-        message: "The agency/account doesn't exist.",
-      });
-    }
-
-    const balance = accountDB[0].balance;
-
-    return res.status(200).send({
-      origin: { agencia: agency, conta: account, balance },
-    });
+    return res.status(200).send(result.message);
   } catch (error) {
     return res.status(500).send({ message: error });
   }
