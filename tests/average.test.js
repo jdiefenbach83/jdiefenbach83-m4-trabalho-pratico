@@ -21,6 +21,6 @@ describe('get /average', () => {
     const req = '/average?agency=999';
 
     const response = await request(url).get(req);
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 });

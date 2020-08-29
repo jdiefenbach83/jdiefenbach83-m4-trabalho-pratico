@@ -3,6 +3,7 @@ import withdrawService from '../services/withdrawService.js';
 import balanceService from '../services/balanceService.js';
 import removeService from '../services/removeService.js';
 import transferService from '../services/transferService.js';
+import averageService from '../services/averageService.js';
 
 import { accountModel } from '../models/accountModel.js';
 
@@ -88,35 +89,15 @@ const transfer = async (req, res) => {
 
 const average = async (req, res) => {
   try {
-    const { agency } = req.query;
+    const result = await averageService.get(req.query);
 
-    if (!!!agency) {
+    if (!!!result.success) {
       return res.status(400).send({
-        message: 'You must send the agency parameter.',
+        message: result.message,
       });
     }
 
-    const accountDB = await accountModel.findOne({
-      agencia: agency,
-    });
-
-    if (!!!accountDB) {
-      return res.status(404).send({
-        message: "The agency doesn't exist.",
-      });
-    }
-
-    const balanceAvg = await accountModel.aggregate([
-      { $match: { agencia: parseInt(agency) } },
-      {
-        $group: { _id: { agency: '$agencia' }, balance: { $avg: '$balance' } },
-      },
-    ]);
-
-    return res.status(200).send({
-      agencia: agency,
-      balance: balanceAvg[0].balance,
-    });
+    return res.status(200).send(result.message);
   } catch (error) {
     return res.status(500).send({ message: error });
   }
