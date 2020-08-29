@@ -2,6 +2,7 @@ import depositService from '../services/depositService.js';
 import withdrawService from '../services/withdrawService.js';
 import balanceService from '../services/balanceService.js';
 import removeService from '../services/removeService.js';
+import transferService from '../services/transferService.js';
 
 import { accountModel } from '../models/accountModel.js';
 
@@ -71,91 +72,15 @@ const remove = async (req, res) => {
 
 const transfer = async (req, res) => {
   try {
-    const { origin, destination, amount } = req.body;
+    const result = await transferService.make(req.body);
 
-    if (!!!origin || !!!destination || !!!amount) {
+    if (!!!result.success) {
       return res.status(400).send({
-        message:
-          'You must send the origin account, destination account and amount parameters.',
+        message: result.message,
       });
     }
 
-    if (amount < 0) {
-      return res.status(400).send({
-        message: 'You must send a positive amount.',
-      });
-    }
-
-    if (origin === destination) {
-      return res.status(400).send({
-        message: 'The origin and destination accounts must be different.',
-      });
-    }
-
-    const originAccountDB = await accountModel.find({
-      conta: origin,
-    });
-
-    if (originAccountDB.length === 0) {
-      return res.status(404).send({
-        message: "The origin account doesn't exist.",
-      });
-    }
-
-    const destinationAccountDB = await accountModel.find({
-      conta: destination,
-    });
-
-    if (destinationAccountDB.length === 0) {
-      return res.status(404).send({
-        message: "The destination account doesn't exist.",
-      });
-    }
-
-    const originId = originAccountDB[0]._id;
-    const originAgency = originAccountDB[0].agencia;
-    const originBalance = originAccountDB[0].balance;
-
-    const destinationId = destinationAccountDB[0]._id;
-    const destinationAgency = destinationAccountDB[0].agencia;
-    const destinationBalance = destinationAccountDB[0].balance;
-
-    const valueToTransfer = amount;
-    const tax = originAgency === destinationAgency ? 0 : 8;
-
-    if (valueToTransfer + tax > originBalance) {
-      return res.status(400).send({
-        message: 'Insufficient funds to transfer.',
-      });
-    }
-
-    const newOriginBalance = originBalance - (valueToTransfer + tax);
-
-    const originResult = await accountModel.updateOne(
-      { _id: originId },
-      { $set: { balance: newOriginBalance } },
-      { runValidators: true }
-    );
-
-    if (originResult.ok !== 1) {
-      return res.status(500).send({ message: 'A error occuried to transfer.' });
-    }
-
-    const newDestinationBalance = destinationBalance + valueToTransfer;
-
-    const destinationResult = await accountModel.updateOne(
-      { _id: destinationId },
-      { $set: { balance: newDestinationBalance } },
-      { runValidators: true }
-    );
-
-    if (destinationResult.ok !== 1) {
-      return res.status(500).send({ message: 'A error occuried to transfer.' });
-    }
-
-    return res.status(200).send({
-      origin: { conta: origin, balance: newOriginBalance },
-    });
+    return res.status(200).send(result.message);
   } catch (error) {
     return res.status(500).send({ message: error });
   }

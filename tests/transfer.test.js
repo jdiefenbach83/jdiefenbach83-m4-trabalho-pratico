@@ -43,13 +43,13 @@ describe('POST /transfer', () => {
     const req = { origin: '999', destination: '1001', amount: 10 };
 
     const response = await request(url).post('/transfer').send(req);
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 
   it("Error: destination account doesn't exist", async () => {
     const req = { origin: '1002', destination: '999', amount: 10 };
 
     const response = await request(url).post('/transfer').send(req);
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 });
