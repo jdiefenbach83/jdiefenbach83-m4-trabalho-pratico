@@ -1,4 +1,5 @@
 import depositService from '../services/depositService.js';
+import withdrawService from '../services/withdrawService.js';
 import { accountModel } from '../models/accountModel.js';
 
 const deposit = async (req, res) => {
@@ -19,58 +20,15 @@ const deposit = async (req, res) => {
 
 const withdraw = async (req, res) => {
   try {
-    const { agency, account, amount } = req.body;
+    const result = await withdrawService.make(req.body);
 
-    if (!!!agency || !!!account || !!!amount) {
+    if (!!!result.success) {
       return res.status(400).send({
-        message: 'You must send the agency, account and amount parameters.',
+        message: result.message,
       });
     }
 
-    if (amount < 0) {
-      return res.status(400).send({
-        message: 'You must send a positive amount.',
-      });
-    }
-
-    const accountDB = await accountModel.find({
-      agencia: agency,
-      conta: account,
-    });
-
-    if (accountDB.length === 0) {
-      return res.status(404).send({
-        message: "The agency/account doesn't exist.",
-      });
-    }
-
-    const id = accountDB[0]._id;
-    const balance = accountDB[0].balance;
-
-    const valueToWithdraw = amount;
-    const tax = 1;
-
-    if (valueToWithdraw + tax > balance) {
-      return res.status(400).send({
-        message: 'Insufficient funds to withdraw.',
-      });
-    }
-
-    const newBalance = balance - (valueToWithdraw + tax);
-
-    const result = await accountModel.updateOne(
-      { _id: id },
-      { $set: { balance: newBalance } },
-      { runValidators: true }
-    );
-
-    if (result.ok !== 1) {
-      return res.status(500).send({ message: 'A error occuried to withdraw.' });
-    }
-
-    return res.status(200).send({
-      origin: { agencia: agency, conta: account, balance: newBalance },
-    });
+    return res.status(200).send(result.message);
   } catch (error) {
     return res.status(500).send({ message: error });
   }
