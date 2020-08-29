@@ -4,6 +4,7 @@ import balanceService from '../services/balanceService.js';
 import removeService from '../services/removeService.js';
 import transferService from '../services/transferService.js';
 import averageService from '../services/averageService.js';
+import lowestService from '../services/lowestService.js';
 
 import { accountModel } from '../models/accountModel.js';
 
@@ -105,25 +106,15 @@ const average = async (req, res) => {
 
 const lowest = async (req, res) => {
   try {
-    const { limit } = req.query;
+    const result = await lowestService.get(req.query);
 
-    if (!!!limit) {
+    if (!!!result.success) {
       return res.status(400).send({
-        message: 'You must send the limit parameter.',
+        message: result.message,
       });
     }
 
-    const lowestCustomers = await accountModel.find(
-      {},
-      ['agencia', 'conta', 'name', 'balance'],
-      { sort: { balance: 1 }, limit: parseInt(limit) }
-    );
-
-    const retorno = lowestCustomers.map(({ agencia, conta, name, balance }) => {
-      return { agencia, conta, name, balance };
-    });
-
-    return res.status(200).send(retorno);
+    return res.status(200).send(result.message);
   } catch (error) {
     return res.status(500).send({ message: error });
   }
