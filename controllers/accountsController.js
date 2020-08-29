@@ -54,19 +54,19 @@ const balance = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  //try {
-  const result = await removeService.remove(req.body);
+  try {
+    const result = await removeService.remove(req.body);
 
-  if (!!!result.success) {
-    return res.status(400).send({
-      message: result.message,
-    });
+    if (!!!result.success) {
+      return res.status(400).send({
+        message: result.message,
+      });
+    }
+
+    return res.status(200).send(result.message);
+  } catch (error) {
+    return res.status(500).send({ message: error });
   }
-
-  return res.status(200).send(result.message);
-  // } catch (error) {
-  //   return res.status(500).send({ message: error });
-  // }
 };
 
 const transfer = async (req, res) => {
