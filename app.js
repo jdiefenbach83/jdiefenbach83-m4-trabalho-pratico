@@ -19,6 +19,7 @@ const db = async () => {
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        useFindAndModify: false,
       }
     );
     console.log('Connected to MongoDB');

@@ -1,6 +1,7 @@
 import depositService from '../services/depositService.js';
 import withdrawService from '../services/withdrawService.js';
 import balanceService from '../services/balanceService.js';
+import removeService from '../services/removeService.js';
 
 import { accountModel } from '../models/accountModel.js';
 
@@ -53,43 +54,19 @@ const balance = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  try {
-    const { agency, account } = req.body;
+  //try {
+  const result = await removeService.remove(req.body);
 
-    if (!!!agency || !!!account) {
-      return res.status(400).send({
-        message: 'You must send the agency and account parameters.',
-      });
-    }
-
-    const accountDB = await accountModel.find({
-      agencia: agency,
-      conta: account,
+  if (!!!result.success) {
+    return res.status(400).send({
+      message: result.message,
     });
-
-    if (accountDB.length === 0) {
-      return res.status(404).send({
-        message: "The agency/account doesn't exist.",
-      });
-    }
-
-    const id = accountDB[0]._id;
-    const result = await accountModel.deleteOne({ _id: id });
-
-    if (result.ok !== 1) {
-      return res
-        .status(500)
-        .send({ message: 'A error occuried to remove an account.' });
-    }
-
-    const agencyCount = await accountModel.countDocuments({ agencia: agency });
-
-    return res.status(200).send({
-      agencyCount,
-    });
-  } catch (error) {
-    return res.status(500).send({ message: error });
   }
+
+  return res.status(200).send(result.message);
+  // } catch (error) {
+  //   return res.status(500).send({ message: error });
+  // }
 };
 
 const transfer = async (req, res) => {
