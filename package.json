@@ -1,0 +1,33 @@
+{
+  "name": "my-bank-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "start-dev": "nodemon app.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "trabalho-pratico-04"
+  ],
+  "author": "Jefferson Diefenbach",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "jest": "^26.4.2",
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "globals": {
+      "__URL__": "http://localhost:3000/api"
+    }
+  }
+}
