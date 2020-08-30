@@ -6,9 +6,9 @@ const seed = async () => {
     await db.startTransaction();
     await accountModel.insertMany(payload);
 
-    db.commitTransaction();
+    await db.commitTransaction();
   } catch (error) {
-    db.abortTransaction();
+    await db.abortTransaction();
     console.log('Error to seed accounts. ' + error);
   }
 };
