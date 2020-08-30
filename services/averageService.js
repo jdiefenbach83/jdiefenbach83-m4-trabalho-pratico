@@ -31,7 +31,7 @@ const get = async (averageToGet) => {
     ]);
 
     return assembleMessage(true, {
-      agencia: agency,
+      agencia: parseInt(agency),
       balance: balanceAvg[0].balance,
     });
   } catch (error) {
