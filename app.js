@@ -13,22 +13,18 @@ app.use('/api', router);
 
 const db = async () => {
   try {
-    await mongoose.connect(
-      //'mongodb+srv://jdiefenbach83:SUa8gIiHlhwH797G@igti.g8tph.gcp.mongodb.net/grades?retryWrites=true&w=majority',
-      'mongodb://127.0.0.1/my-bank-api',
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-      }
-    );
+    await mongoose.connect(process.env.MONGODB, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+    });
     console.log('Connected to MongoDB');
   } catch (error) {
     console.log('Error to connect on MongoDB. ' + error);
   }
 };
 
-app.listen(3000, () => {
+app.listen(process.env.HTTP_PORT, () => {
   db();
   console.log('My Bank API has Started!');
 });
