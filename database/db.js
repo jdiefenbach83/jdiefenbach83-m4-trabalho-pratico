@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+let session = null;
+
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGODB, {
@@ -13,4 +15,32 @@ const connect = async () => {
   }
 };
 
-export default { connect };
+const startTransaction = async () => {
+  session = await mongoose.startSession();
+  session.startTransaction();
+};
+
+const commitTransaction = () => {
+  if (!session) {
+    return;
+  }
+
+  session.commitTransaction();
+  session.endSession();
+};
+
+const abortTransaction = () => {
+  if (!session) {
+    return;
+  }
+
+  session.abortTransaction();
+  session.endSession();
+};
+
+export default {
+  connect,
+  startTransaction,
+  commitTransaction,
+  abortTransaction,
+};

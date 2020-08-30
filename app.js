@@ -15,3 +15,5 @@ app.listen(process.env.HTTP_PORT, () => {
   db.connect();
   console.log('My Bank API has Started!');
 });
+
+export default app;
