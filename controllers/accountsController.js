@@ -6,8 +6,7 @@ import transferService from '../services/transferService.js';
 import averageService from '../services/averageService.js';
 import lowestService from '../services/lowestService.js';
 import highestService from '../services/highestService.js';
-
-import { accountModel } from '../models/accountModel.js';
+import moveToPrivateService from '../services/moveToPrivateService.js';
 
 const deposit = async (req, res) => {
   try {
@@ -138,50 +137,19 @@ const highest = async (req, res) => {
 };
 
 const moveToPrivate = async (_, res) => {
-  try {
-    const customers = await accountModel.find(
-      {},
-      ['agencia', 'conta', 'name', 'balance'],
-      {
-        sort: { balance: -1 },
-      }
-    );
+  //try {
+  const result = await moveToPrivateService.move();
 
-    const accountsToMove = [];
-
-    for (let customer of customers) {
-      const exists = accountsToMove.some(
-        (item) => item.agencia === customer.agencia
-      );
-
-      if (exists) {
-        continue;
-      }
-
-      accountsToMove.push(customer);
-    }
-
-    const movedAccounts = [];
-    const updates = [];
-
-    accountsToMove.forEach(async ({ id, agencia, conta, name, balance }) => {
-      updates.push({
-        updateOne: { filter: { _id: id }, update: { agencia: 99 } },
-      });
-      movedAccounts.push({
-        agencia,
-        conta,
-        name,
-        balance,
-      });
+  if (!!!result.success) {
+    return res.status(400).send({
+      message: result.message,
     });
-
-    const result = await accountModel.bulkWrite(updates);
-
-    return res.status(200).send(movedAccounts);
-  } catch (error) {
-    return res.status(500).send({ message: error });
   }
+
+  return res.status(200).send(movedAccounts);
+  // } catch (error) {
+  //   return res.status(500).send({ message: error });
+  // }
 };
 
 export default {
