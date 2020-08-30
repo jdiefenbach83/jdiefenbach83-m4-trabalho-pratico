@@ -9,7 +9,7 @@ const url = 'http://localhost:6000/api';
 
 chai.use(chaiHttp);
 
-describe('delete /remove', () => {
+describe('DELETE /remove', () => {
   it('Creating an account to delete', async () => {
     await accountModel.create({
       agencia: 10,
