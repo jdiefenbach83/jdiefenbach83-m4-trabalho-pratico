@@ -137,19 +137,19 @@ const highest = async (req, res) => {
 };
 
 const moveToPrivate = async (_, res) => {
-  //try {
-  const result = await moveToPrivateService.move();
+  try {
+    const result = await moveToPrivateService.move();
 
-  if (!!!result.success) {
-    return res.status(400).send({
-      message: result.message,
-    });
+    if (!!!result.success) {
+      return res.status(400).send({
+        message: result.message,
+      });
+    }
+
+    return res.status(200).send(result.message);
+  } catch (error) {
+    return res.status(500).send({ message: error });
   }
-
-  return res.status(200).send(movedAccounts);
-  // } catch (error) {
-  //   return res.status(500).send({ message: error });
-  // }
 };
 
 export default {
