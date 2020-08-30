@@ -28,7 +28,7 @@ describe('DELETE /remove', () => {
     const response = await chai.request(url).delete('/remove').send(req);
 
     response.should.have.status(200);
-    response.body.should.have.property('agencyCount', 30);
+    response.body.should.have.property('agencyCount', 29);
 
     const account = await accountModel.findOne(req);
     chai.expect(account).to.be.null;
