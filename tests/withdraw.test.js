@@ -35,6 +35,6 @@ describe('POST /withdraw', () => {
     const req = { agency: '10', account: '999', amount: 10 };
 
     const response = await request(url).post('/withdraw').send(req);
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 });

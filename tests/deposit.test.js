@@ -1,9 +1,5 @@
 const request = require('supertest');
-const { setupDB } = require('../test-setup.js');
-
 const url = global.__URL__;
-
-setupDB('test');
 
 describe('POST /deposit', () => {
   it('Deposit into existing account', async () => {
@@ -32,6 +28,6 @@ describe('POST /deposit', () => {
     const req = { agency: '10', account: '999', amount: 10 };
 
     const response = await request(url).post('/deposit').send(req);
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 });

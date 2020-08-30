@@ -21,6 +21,6 @@ describe('get /balance', () => {
     const req = '/balance?agency=10&account=999';
 
     const response = await request(url).get(req);
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 });

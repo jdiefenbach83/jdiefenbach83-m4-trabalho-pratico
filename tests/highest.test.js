@@ -10,7 +10,7 @@ describe('get /highest', () => {
   });
 
   it('Error: empty request', async () => {
-    const req = '/lowest';
+    const req = '/highest';
 
     const response = await request(url).get(req);
     expect(response.statusCode).toEqual(400);
